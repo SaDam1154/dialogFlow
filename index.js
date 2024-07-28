@@ -10,21 +10,26 @@ app.post('/webhook', async (req, res) => {
     const parameters = req.body.queryResult.parameters;
 
     if (intentName === 'CheckProduct') {
-        // Thay 'CheckProduct' bằng tên Intent của bạn
         const productInput = parameters.product; // Lấy giá trị sản phẩm từ parameter
 
         try {
             // Gọi API từ backend của bạn
             const response = await axios.get('https://thuc-pham-sach-be.onrender.com/api/product/18');
+            // Đảm bảo rằng API trả về dữ liệu mong đợi
+            if (response.data.success && response.data.product) {
+                const product = response.data.product;
 
-            const product = response.product;
+                // Tạo phản hồi từ dữ liệu API
+                const responseText = `Chúng tôi có sản phẩm ${product.name}. Mô tả: ${product.description}. Giá: ${product.price} VND.`;
 
-            // Tạo phản hồi từ dữ liệu API
-            const responseText = `${response} Chúng tôi có sản phẩm ${product}. Mô tả: ${product}. Giá: ${product} VND.`;
-
-            return res.json({
-                fulfillmentText: responseText,
-            });
+                return res.json({
+                    fulfillmentText: responseText,
+                });
+            } else {
+                return res.json({
+                    fulfillmentText: 'Xin lỗi, không tìm thấy thông tin sản phẩm bạn yêu cầu.',
+                });
+            }
         } catch (error) {
             console.error('Error calling backend API:', error);
             return res.json({
