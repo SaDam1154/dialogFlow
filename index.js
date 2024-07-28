@@ -93,19 +93,23 @@ app.post('/webhook', async (req, res) => {
                                 text: ['Chúng tôi tìm thấy các sản phẩm tương ứng là:'],
                             },
                         },
-                        ...products.slice(0, 3).map((product, index) => {
-                            return {
+                        ...products.slice(0, 3).flatMap((product, index) => [
+                            {
                                 text: {
                                     text: [`${index + 1}. Sản phẩm ${product.name}: ${product.description}.`],
                                 },
+                            },
+                            {
                                 text: {
                                     text: [`Giá sản phẩm: ${product.price} VND.`],
                                 },
+                            },
+                            {
                                 text: {
-                                    text: [` `],
+                                    text: [' '], // Thêm khoảng trắng nếu cần
                                 },
-                            };
-                        }),
+                            },
+                        ]),
                     ];
 
                     return res.json({
