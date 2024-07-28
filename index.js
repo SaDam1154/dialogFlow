@@ -11,7 +11,6 @@ app.post('/webhook', async (req, res) => {
 
     if (intentName == 'Chào_hỏi_Intent') {
         const content = [
-            'Chào bạn! Tôi là trợ lý ảo của cửa hàng thực phẩm sạch.Bạn muốn được hỗ trợ gì? Hãy cho tôi biết để tôi có thể giúp bạn.',
             'Tìm kiếm sản phẩm',
             'Thông tin các chương trình khuyến mãi',
             'Thông tin loại thực phẩm như: khô, đông lạnh, đóng hộp, ngũ cốc, nấm, rau củ quả, trái cây...',
