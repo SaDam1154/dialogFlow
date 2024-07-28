@@ -20,7 +20,7 @@ app.post('/webhook', async (req, res) => {
             const product = response.product;
 
             // Tạo phản hồi từ dữ liệu API
-            const responseText = `${response} Chúng tôi có sản phẩm ${product}. Mô tả: ${product.description}. Giá: ${product.price} VND.`;
+            const responseText = `${response} Chúng tôi có sản phẩm ${product}. Mô tả: ${product}. Giá: ${product} VND.`;
 
             return res.json({
                 fulfillmentText: responseText,
