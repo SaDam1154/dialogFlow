@@ -177,7 +177,7 @@ app.post('/webhook', async (req, res) => {
                             text: ['Chúng tôi tìm thấy các sản phẩm tương ứng là:'],
                         },
                     },
-                    ...products.slice(0, 3).flatMap((product, index) => [
+                    ...products.slice(0, 5).flatMap((product, index) => [
                         {
                             text: {
                                 text: [`${index + 1}. Sản phẩm ${product.name}: ${product.description}.`],
