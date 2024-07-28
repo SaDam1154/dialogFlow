@@ -11,11 +11,11 @@ app.post('/webhook', async (req, res) => {
 
     if (intentName == 'CheckProduct') {
         const productInput = removeVietnameseTones(parameters.ProductName.toString()); // Lấy giá trị sản phẩm từ parameter
+        console.log(productInput);
 
         try {
             // Gọi API từ backend của bạn
             const response = await axios.get('https://thuc-pham-sach-be.onrender.com/api/product/searchSimple?name=' + productInput);
-            console.log(productInput);
             console.log(response.data);
             // Đảm bảo rằng API trả về dữ liệu mong đợi
             if (response.data.success && response.data.products) {
@@ -34,14 +34,21 @@ app.post('/webhook', async (req, res) => {
                         fulfillmentText: responseText,
                     });
                 } else {
-                    // Tạo phản hồi từ dữ liệu API
-                    const fulfillmentMessages = products.slice(0, 3).map((product, index) => {
-                        return {
+                    const fulfillmentMessages = [
+                        {
                             text: {
-                                text: [`${index + 1}. ${product.name}: ${product.price} VND. Mô tả: ${product.description}.   `],
+                                text: ['Chúng tôi tìm thấy các sản phẩm tương ứng là:'],
                             },
-                        };
-                    });
+                        },
+                        ...products.slice(0, 3).map((product, index) => {
+                            return {
+                                text: {
+                                    text: [`${index + 1}. Sản phẩm ${product.name}: ${product.description}. `],
+                                    text: [`Giá: ${product.price} VND.  `],
+                                },
+                            };
+                        }),
+                    ];
 
                     return res.json({
                         fulfillmentMessages: fulfillmentMessages,
