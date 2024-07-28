@@ -9,6 +9,43 @@ app.post('/webhook', async (req, res) => {
     const intentName = req.body.queryResult.intent.displayName;
     const parameters = req.body.queryResult.parameters;
 
+    if (intentName == 'Chào_hỏi_Intent') {
+        const content = [
+            'Chào bạn! Tôi là trợ lý ảo của cửa hàng thực phẩm sạch.Bạn muốn được hỗ trợ gì? Hãy cho tôi biết để tôi có thể giúp bạn.',
+            'Tìm kiếm sản phẩm',
+            'Thông tin các chương trình khuyến mãi',
+            'Thông tin loại thực phẩm như: khô, đông lạnh, đóng hộp, ngũ cốc, nấm, rau củ quả, trái cây...',
+            'Thông tin về thời gian giao hàng.',
+            'Thông tin về phí giao hàng.',
+            'Thông tin về chính sách đổi trả sản phẩm.',
+            'Cách thức đánh giá, phản hồi.',
+        ];
+        const fulfillmentMessages = [
+            {
+                text: {
+                    text: [
+                        'Chào bạn! Tôi là trợ lý ảo của cửa hàng thực phẩm sạch.Bạn muốn được hỗ trợ gì? Hãy cho tôi biết để tôi có thể giúp bạn.',
+                    ],
+                },
+            },
+            {
+                text: {
+                    text: ['Dưới đây là một vài nội dung gợi ý:'],
+                },
+            },
+            ...content.map((content, index) => {
+                return {
+                    text: {
+                        text: [`${index + 1}. ${content}.`],
+                    },
+                };
+            }),
+        ];
+
+        return res.json({
+            fulfillmentMessages: fulfillmentMessages,
+        });
+    }
     if (intentName == 'promotion-program') {
         try {
             // Gọi API từ backend của bạn
@@ -102,11 +139,6 @@ app.post('/webhook', async (req, res) => {
                             {
                                 text: {
                                     text: [`Giá sản phẩm: ${product.price} VND.`],
-                                },
-                            },
-                            {
-                                text: {
-                                    text: [' '], // Thêm khoảng trắng nếu cần
                                 },
                             },
                         ]),
