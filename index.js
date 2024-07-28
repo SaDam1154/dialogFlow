@@ -34,13 +34,17 @@ app.post('/webhook', async (req, res) => {
                         fulfillmentText: responseText,
                     });
                 } else {
-                    let responseText = 'Chúng tôi tìm thấy nhiều sản phẩm phù hợp: \n';
-                    products.forEach((product, index) => {
-                        responseText += `${index + 1}. ${product.name}: ${product.price} VND. Mô tả: ${product.description}\n        `;
+                    // Tạo phản hồi từ dữ liệu API
+                    const fulfillmentMessages = products.slice(0, 3).map((product, index) => {
+                        return {
+                            text: {
+                                text: [`${index + 1}. ${product.name}: ${product.price} VND. Mô tả: ${product.description}.   `],
+                            },
+                        };
                     });
 
                     return res.json({
-                        fulfillmentText: responseText,
+                        fulfillmentMessages: fulfillmentMessages,
                     });
                 }
             } else {
