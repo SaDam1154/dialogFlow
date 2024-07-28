@@ -14,9 +14,9 @@ app.post('/webhook', async (req, res) => {
 
         try {
             // Gọi API từ backend của bạn
-            const response = await axios.get(
-                'https://thuc-pham-sach-be.onrender.com/api/product/searchSimple?name=' + encodeURIComponent(productInput)
-            );
+            const response = await axios.get('https://thuc-pham-sach-be.onrender.com/api/product/searchSimple?name=' + productInput);
+            console.log(productInput);
+            console.log(response.data);
             // Đảm bảo rằng API trả về dữ liệu mong đợi
             if (response.data.success && response.data.products) {
                 const products = response.data.products;
