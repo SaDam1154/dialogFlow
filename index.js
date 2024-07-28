@@ -9,6 +9,58 @@ app.post('/webhook', async (req, res) => {
     const intentName = req.body.queryResult.intent.displayName;
     const parameters = req.body.queryResult.parameters;
 
+    if (intentName == 'promotion-program') {
+        try {
+            // Gọi API từ backend của bạn
+            const response = await axios.get('http://localhost:5000/api/promotion-program');
+            console.log(response.data);
+            // Đảm bảo rằng API trả về dữ liệu mong đợi
+            if (response.data.success && response.data.products) {
+                const promotionPrograms = response.data.promotionPrograms;
+                // Kiểm tra số lượng sản phẩm tìm thấy
+                if (promotionPrograms.length == 0) {
+                    return res.json({
+                        fulfillmentText: 'Xin lỗi, hiện tại không có chương trình khuyến mãi tại cửa hàng.',
+                    });
+                } else if (promotionPrograms.length == 1) {
+                    const promotionProgram = promotionPrograms[0];
+                    const responseText = `Chúng tôi có sản phẩm đang có chương trình khuyến mãi : ${promotionProgram.description}.`;
+
+                    return res.json({
+                        fulfillmentText: responseText,
+                    });
+                } else {
+                    const fulfillmentMessages = [
+                        {
+                            text: {
+                                text: ['Chúng tôi đang có những chương trình khuyến mãi sau:'],
+                            },
+                        },
+                        ...promotionPrograms.slice(0, 3).map((Program, index) => {
+                            return {
+                                text: {
+                                    text: [`${index + 1}. ${Program.description}.`],
+                                },
+                            };
+                        }),
+                    ];
+
+                    return res.json({
+                        fulfillmentMessages: fulfillmentMessages,
+                    });
+                }
+            } else {
+                return res.json({
+                    fulfillmentText: 'Xin lỗi, không tìm thấy thông tin bạn yêu cầu.',
+                });
+            }
+        } catch (error) {
+            console.error('Error calling backend API:', error);
+            return res.json({
+                fulfillmentText: 'Xin lỗi, tôi không thể truy xuất thông tin chương trình khuyến mãi vào lúc này.',
+            });
+        }
+    }
     if (intentName == 'CheckProduct') {
         const productInput = removeVietnameseTones(parameters.ProductName.toString()); // Lấy giá trị sản phẩm từ parameter
         console.log(productInput);
@@ -46,7 +98,7 @@ app.post('/webhook', async (req, res) => {
                                     text: [`${index + 1}. Sản phẩm ${product.name}: ${product.description}.`],
                                 },
                                 text: {
-                                    text: [`Giá sản phẩm: ${product.price} VND.\n\n`],
+                                    text: [`Giá sản phẩm: ${product.price} VND.`],
                                 },
                                 text: {
                                     text: [` `],
@@ -67,7 +119,7 @@ app.post('/webhook', async (req, res) => {
         } catch (error) {
             console.error('Error calling backend API:', error);
             return res.json({
-                fulfillmentText: 'Xin lỗi, tôi không thể truy xuất thông tin sản phẩm vào lúc này.' + error,
+                fulfillmentText: 'Xin lỗi, tôi không thể truy xuất thông tin sản phẩm vào lúc này.',
             });
         }
     } else {
