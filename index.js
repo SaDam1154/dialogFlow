@@ -28,7 +28,7 @@ app.post('/webhook', async (req, res) => {
                     });
                 } else if (products.length === 1) {
                     const product = products[0];
-                    const responseText = `Chúng tôi có sản phẩm ${product.name}. Mô tả: ${product.description}. Giá: ${product.price} VND.`;
+                    const responseText = `Chúng tôi có sản phẩm ${product.name}. Giá: ${product.price} VND. Mô tả: ${product.description}.`;
 
                     return res.json({
                         fulfillmentText: responseText,
@@ -36,7 +36,7 @@ app.post('/webhook', async (req, res) => {
                 } else {
                     let responseText = 'Chúng tôi tìm thấy nhiều sản phẩm phù hợp: \n';
                     products.forEach((product, index) => {
-                        responseText += `${index + 1}. ${product.name}: ${product.price} VND. Mô tả: ${product.description}\n`;
+                        responseText += `${index + 1}. ${product.name}: ${product.price} VND. Mô tả: ${product.description}\n        `;
                     });
 
                     return res.json({
