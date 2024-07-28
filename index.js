@@ -12,7 +12,7 @@ app.post('/webhook', async (req, res) => {
     if (intentName == 'promotion-program') {
         try {
             // Gọi API từ backend của bạn
-            const response = await axios.get('http://localhost:5000/api/promotion-program');
+            const response = await axios.get('https://thuc-pham-sach-be.onrender.com/api/promotion-program');
             console.log(response.data);
             // Đảm bảo rằng API trả về dữ liệu mong đợi
             if (response.data.success && response.data.products) {
@@ -61,6 +61,7 @@ app.post('/webhook', async (req, res) => {
             });
         }
     }
+
     if (intentName == 'CheckProduct') {
         const productInput = removeVietnameseTones(parameters.ProductName.toString()); // Lấy giá trị sản phẩm từ parameter
         console.log(productInput);
