@@ -7,12 +7,15 @@ app.use(bodyParser.json());
 
 app.post('/webhook', async (req, res) => {
     const intentName = req.body.queryResult.intent.displayName;
+    const parameters = req.body.queryResult.parameters;
 
-    if (intentName === 'CheckEggProduct') {
-        // Thay 'CheckEggProduct' bằng tên Intent của bạn
+    if (intentName === 'CheckProduct') {
+        // Thay 'CheckProduct' bằng tên Intent của bạn
+        const productInput = parameters.product; // Lấy giá trị sản phẩm từ parameter
+
         try {
             // Gọi API từ backend của bạn
-            const response = await axios.get('https://thuc-pham-sach-be.onrender.com/api/product/18'); // Thay thế URL bằng URL thực tế của bạn
+            const response = await axios.get('https://thuc-pham-sach-be.onrender.com/api/product/18');
 
             const product = response.product;
 
