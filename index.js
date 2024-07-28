@@ -15,7 +15,7 @@ app.post('/webhook', async (req, res) => {
             const response = await axios.get('https://thuc-pham-sach-be.onrender.com/api/promotion-program');
             console.log(response.data);
             // Đảm bảo rằng API trả về dữ liệu mong đợi
-            if (response.data.success && response.data.products) {
+            if (response.data.success && response.data.promotionPrograms) {
                 const promotionPrograms = response.data.promotionPrograms;
                 // Kiểm tra số lượng sản phẩm tìm thấy
                 if (promotionPrograms.length == 0) {
