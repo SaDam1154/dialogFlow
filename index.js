@@ -43,8 +43,9 @@ app.post('/webhook', async (req, res) => {
                         ...products.slice(0, 3).map((product, index) => {
                             return {
                                 text: {
-                                    text: [`${index + 1}. Sản phẩm ${product.name}: ${product.description}. `],
-                                    text: [`Giá: ${product.price} VND.  `],
+                                    text: [
+                                        `${index + 1}. Sản phẩm ${product.name}: ${product.description}\nGiá: ${product.price} VND.\n\n`,
+                                    ],
                                 },
                             };
                         }),
