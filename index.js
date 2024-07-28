@@ -9,8 +9,8 @@ app.post('/webhook', async (req, res) => {
     const intentName = req.body.queryResult.intent.displayName;
     const parameters = req.body.queryResult.parameters;
 
-    if (intentName === 'CheckProduct') {
-        const productInput = removeVietnameseTones(parameters.ProductName); // Lấy giá trị sản phẩm từ parameter
+    if (intentName == 'CheckProduct') {
+        const productInput = removeVietnameseTones(parameters.ProductName.toString()); // Lấy giá trị sản phẩm từ parameter
 
         try {
             // Gọi API từ backend của bạn
