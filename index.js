@@ -160,54 +160,40 @@ app.post('/webhook', async (req, res) => {
                 });
             }
         } else {
-            const productInput1 = removeVietnameseTones(parameters.ProductName[0].toString()); // Lấy giá trị sản phẩm từ parameter
-            console.log(productInput1);
-            const productInput2 = removeVietnameseTones(parameters.ProductName[1].toString()); // Lấy giá trị sản phẩm từ parameter
-            console.log(productInput1);
+            const productNames = parameters.ProductName.map((name) => removeVietnameseTones(name.toString())); // Xử lý tất cả giá trị ProductName
+            console.log(productNames);
 
             try {
                 // Gọi API từ backend của bạn
-                const response1 = await axios.get('https://thuc-pham-sach-be.onrender.com/api/product/searchSimple?name=' + productInput1);
-                const response2 = await axios.get('https://thuc-pham-sach-be.onrender.com/api/product/searchSimple?name=' + productInput2);
-                if (response1.data.success && response2.data.success) {
-                    const products = response1.data.products;
-                    const products2 = response2.data.products;
-                    const fulfillmentMessages = [
+                const responses = await Promise.all(
+                    productNames.map((name) => axios.get('https://thuc-pham-sach-be.onrender.com/api/product/searchSimple?name=' + name))
+                );
+                // Kết hợp tất cả các sản phẩm từ các phản hồi
+                const products = responses.flatMap((response) => (response.data.success ? response.data.products : []));
+
+                const fulfillmentMessages = [
+                    {
+                        text: {
+                            text: ['Chúng tôi tìm thấy các sản phẩm tương ứng là:'],
+                        },
+                    },
+                    ...products.slice(0, 3).flatMap((product, index) => [
                         {
                             text: {
-                                text: ['Chúng tôi tìm thấy các sản phẩm tương ứng là:'],
+                                text: [`${index + 1}. Sản phẩm ${product.name}: ${product.description}.`],
                             },
                         },
-                        ...products.slice(0, 3).flatMap((product, index) => [
-                            {
-                                text: {
-                                    text: [`${index + 1}. Sản phẩm ${product.name}: ${product.description}.`],
-                                },
+                        {
+                            text: {
+                                text: [`Giá sản phẩm: ${product.priceDiscounted} VND.`],
                             },
-                            {
-                                text: {
-                                    text: [`Giá sản phẩm: ${product.priceDiscounted} VND.`],
-                                },
-                            },
-                        ]),
-                        ...products2.slice(0, 3).flatMap((product, index) => [
-                            {
-                                text: {
-                                    text: [`${index + 1 + products.length}. Sản phẩm ${product.name}: ${product.description}.`],
-                                },
-                            },
-                            {
-                                text: {
-                                    text: [`Giá sản phẩm: ${product.priceDiscounted} VND.`],
-                                },
-                            },
-                        ]),
-                    ];
+                        },
+                    ]),
+                ];
 
-                    return res.json({
-                        fulfillmentMessages: fulfillmentMessages,
-                    });
-                }
+                return res.json({
+                    fulfillmentMessages: fulfillmentMessages,
+                });
             } catch (error) {
                 console.error('Error calling backend API:', error);
                 return res.json({
