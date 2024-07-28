@@ -118,10 +118,25 @@ app.post('/webhook', async (req, res) => {
                         });
                     } else if (products.length === 1) {
                         const product = products[0];
-                        const responseText = `Chúng tôi có sản phẩm ${product.name}. Giá: ${product.priceDiscounted} VND. Mô tả: ${product.description}.`;
-
+                        const fulfillmentMessages = [
+                            {
+                                text: {
+                                    text: [`Chúng tôi có sản phẩm ${product.name}: ${product.description}.`],
+                                },
+                            },
+                            {
+                                text: {
+                                    text: [`Giá sản phẩm là: ${product.priceDiscounted} VNĐ.`],
+                                },
+                            },
+                            {
+                                text: {
+                                    text: [`Link tới sản phẩm: http://localhost:5173/product/${product.id}.`],
+                                },
+                            },
+                        ];
                         return res.json({
-                            fulfillmentText: responseText,
+                            fulfillmentMessages: fulfillmentMessages,
                         });
                     } else {
                         const fulfillmentMessages = [
@@ -139,6 +154,11 @@ app.post('/webhook', async (req, res) => {
                                 {
                                     text: {
                                         text: [`Giá sản phẩm: ${product.priceDiscounted} VND.`],
+                                    },
+                                },
+                                {
+                                    text: {
+                                        text: [`Link tới sản phẩm: http://localhost:5173/product/${product.id}.`],
                                     },
                                 },
                             ]),
@@ -186,6 +206,11 @@ app.post('/webhook', async (req, res) => {
                         {
                             text: {
                                 text: [`Giá sản phẩm: ${product.priceDiscounted} VND.`],
+                            },
+                        },
+                        {
+                            text: {
+                                text: [`Link tới sản phẩm: http://localhost:5173/product/${product.id}.`],
                             },
                         },
                     ]),
