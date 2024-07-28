@@ -99,30 +99,79 @@ app.post('/webhook', async (req, res) => {
     }
 
     if (intentName == 'CheckProduct') {
-        const productInput = removeVietnameseTones(parameters.ProductName.toString()); // Lấy giá trị sản phẩm từ parameter
-        console.log(productInput);
+        if (parameters.ProductName.length == 1) {
+            const productInput = removeVietnameseTones(parameters.ProductName[0].toString()); // Lấy giá trị sản phẩm từ parameter
+            console.log(productInput);
 
-        try {
-            // Gọi API từ backend của bạn
-            const response = await axios.get('https://thuc-pham-sach-be.onrender.com/api/product/searchSimple?name=' + productInput);
-            console.log(response.data);
-            // Đảm bảo rằng API trả về dữ liệu mong đợi
-            if (response.data.success && response.data.products) {
-                const products = response.data.products;
+            try {
+                // Gọi API từ backend của bạn
+                const response = await axios.get('https://thuc-pham-sach-be.onrender.com/api/product/searchSimple?name=' + productInput);
+                console.log(response.data);
+                // Đảm bảo rằng API trả về dữ liệu mong đợi
+                if (response.data.success && response.data.products) {
+                    const products = response.data.products;
 
-                // Kiểm tra số lượng sản phẩm tìm thấy
-                if (products.length === 0) {
+                    // Kiểm tra số lượng sản phẩm tìm thấy
+                    if (products.length === 0) {
+                        return res.json({
+                            fulfillmentText: 'Xin lỗi, không tìm thấy thông tin sản phẩm bạn yêu cầu.',
+                        });
+                    } else if (products.length === 1) {
+                        const product = products[0];
+                        const responseText = `Chúng tôi có sản phẩm ${product.name}. Giá: ${product.priceDiscounted} VND. Mô tả: ${product.description}.`;
+
+                        return res.json({
+                            fulfillmentText: responseText,
+                        });
+                    } else {
+                        const fulfillmentMessages = [
+                            {
+                                text: {
+                                    text: ['Chúng tôi tìm thấy các sản phẩm tương ứng là:'],
+                                },
+                            },
+                            ...products.slice(0, 3).flatMap((product, index) => [
+                                {
+                                    text: {
+                                        text: [`${index + 1}. Sản phẩm ${product.name}: ${product.description}.`],
+                                    },
+                                },
+                                {
+                                    text: {
+                                        text: [`Giá sản phẩm: ${product.priceDiscounted} VND.`],
+                                    },
+                                },
+                            ]),
+                        ];
+
+                        return res.json({
+                            fulfillmentMessages: fulfillmentMessages,
+                        });
+                    }
+                } else {
                     return res.json({
                         fulfillmentText: 'Xin lỗi, không tìm thấy thông tin sản phẩm bạn yêu cầu.',
                     });
-                } else if (products.length === 1) {
-                    const product = products[0];
-                    const responseText = `Chúng tôi có sản phẩm ${product.name}. Giá: ${product.priceDiscounted} VND. Mô tả: ${product.description}.`;
+                }
+            } catch (error) {
+                console.error('Error calling backend API:', error);
+                return res.json({
+                    fulfillmentText: 'Xin lỗi, tôi không thể truy xuất thông tin sản phẩm vào lúc này.',
+                });
+            }
+        } else {
+            const productInput1 = removeVietnameseTones(parameters.ProductName[0].toString()); // Lấy giá trị sản phẩm từ parameter
+            console.log(productInput1);
+            const productInput2 = removeVietnameseTones(parameters.ProductName[1].toString()); // Lấy giá trị sản phẩm từ parameter
+            console.log(productInput1);
 
-                    return res.json({
-                        fulfillmentText: responseText,
-                    });
-                } else {
+            try {
+                // Gọi API từ backend của bạn
+                const response1 = await axios.get('https://thuc-pham-sach-be.onrender.com/api/product/searchSimple?name=' + productInput1);
+                const response2 = await axios.get('https://thuc-pham-sach-be.onrender.com/api/product/searchSimple?name=' + productInput2);
+                if (response1.data.success && response2.data.success) {
+                    const products = response1.data.products;
+                    const products2 = response2.data.products;
                     const fulfillmentMessages = [
                         {
                             text: {
@@ -141,22 +190,30 @@ app.post('/webhook', async (req, res) => {
                                 },
                             },
                         ]),
+                        ...products2.slice(0, 3).flatMap((product, index) => [
+                            {
+                                text: {
+                                    text: [`${index + 1 + products.length}. Sản phẩm ${product.name}: ${product.description}.`],
+                                },
+                            },
+                            {
+                                text: {
+                                    text: [`Giá sản phẩm: ${product.priceDiscounted} VND.`],
+                                },
+                            },
+                        ]),
                     ];
 
                     return res.json({
                         fulfillmentMessages: fulfillmentMessages,
                     });
                 }
-            } else {
+            } catch (error) {
+                console.error('Error calling backend API:', error);
                 return res.json({
-                    fulfillmentText: 'Xin lỗi, không tìm thấy thông tin sản phẩm bạn yêu cầu.',
+                    fulfillmentText: 'Xin lỗi, tôi không thể truy xuất thông tin sản phẩm vào lúc này.',
                 });
             }
-        } catch (error) {
-            console.error('Error calling backend API:', error);
-            return res.json({
-                fulfillmentText: 'Xin lỗi, tôi không thể truy xuất thông tin sản phẩm vào lúc này.',
-            });
         }
     } else {
         return res.json({
