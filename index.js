@@ -28,7 +28,7 @@ app.post('/webhook', async (req, res) => {
         } catch (error) {
             console.error('Error calling backend API:', error);
             return res.json({
-                fulfillmentText: 'Xin lỗi, tôi không thể truy xuất thông tin sản phẩm vào lúc này.',
+                fulfillmentText: 'Xin lỗi, tôi không thể truy xuất thông tin sản phẩm vào lúc này.' + error,
             });
         }
     } else {
