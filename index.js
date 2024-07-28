@@ -14,7 +14,7 @@ app.post('/webhook', async (req, res) => {
             // Gọi API từ backend của bạn
             const response = await axios.get('https://thuc-pham-sach-be.onrender.com/api/product/18'); // Thay thế URL bằng URL thực tế của bạn
 
-            const product = response.data;
+            const product = response.product;
 
             // Tạo phản hồi từ dữ liệu API
             const responseText = `Chúng tôi có sản phẩm ${product.name}. Mô tả: ${product.description}. Giá: ${product.price} VND.`;
