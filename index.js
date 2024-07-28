@@ -121,7 +121,7 @@ app.post('/webhook', async (req, res) => {
                         const fulfillmentMessages = [
                             {
                                 text: {
-                                    text: [`Chúng tôi có sản phẩm ${product.name}: ${product.description}.`],
+                                    text: [`Chúng tôi có sản phẩm ${product.name}: ${product.description}`],
                                 },
                             },
                             {
@@ -131,7 +131,7 @@ app.post('/webhook', async (req, res) => {
                             },
                             {
                                 text: {
-                                    text: [`Link tới sản phẩm: http://localhost:5173/product/${product.id}.`],
+                                    text: [`Link tới sản phẩm: http://localhost:5173/product/${product.id}`],
                                 },
                             },
                         ];
@@ -148,7 +148,7 @@ app.post('/webhook', async (req, res) => {
                             ...products.slice(0, 3).flatMap((product, index) => [
                                 {
                                     text: {
-                                        text: [`${index + 1}. Sản phẩm ${product.name}: ${product.description}.`],
+                                        text: [`${index + 1}. Sản phẩm ${product.name}: ${product.description}`],
                                     },
                                 },
                                 {
@@ -158,7 +158,7 @@ app.post('/webhook', async (req, res) => {
                                 },
                                 {
                                     text: {
-                                        text: [`Link tới sản phẩm: http://localhost:5173/product/${product.id}.`],
+                                        text: [`Link tới sản phẩm: http://localhost:5173/product/${product.id}`],
                                     },
                                 },
                             ]),
@@ -200,7 +200,7 @@ app.post('/webhook', async (req, res) => {
                     ...products.slice(0, 5).flatMap((product, index) => [
                         {
                             text: {
-                                text: [`${index + 1}. Sản phẩm ${product.name}: ${product.description}.`],
+                                text: [`${index + 1}. Sản phẩm ${product.name}: ${product.description}`],
                             },
                         },
                         {
@@ -210,7 +210,7 @@ app.post('/webhook', async (req, res) => {
                         },
                         {
                             text: {
-                                text: [`Link tới sản phẩm: http://localhost:5173/product/${product.id}.`],
+                                text: [`Link tới sản phẩm: http://localhost:5173/product/${product.id}`],
                             },
                         },
                     ]),
